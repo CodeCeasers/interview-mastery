@@ -4,9 +4,23 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Toaster, toast } from "sonner";
+import { BackendURL } from "../../../config";
 require("dotenv").config();
+import { RecoilRoot, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { userAtom } from "@/atom/user";
 
-export default function SignUp() {
+export default function() {
+
+  return <>
+  <RecoilRoot>
+      <SignUp />
+  </RecoilRoot>
+  </>
+}
+
+
+function SignUp() {
+  const [user, setUser] = useRecoilState(userAtom);
   const router = useRouter();
   const [isCandidate, setCandidate] = useState(false);
   const [form, setForm] = useState({
@@ -31,27 +45,6 @@ export default function SignUp() {
     isCandid ? setInterviewStyle(true) : setInterviewStyle(false);
   };
 
-  //   useEffect(() => {
-  //     const handleStorageChange = () => {
-  //       const storedTheme = localStorage.getItem("theme");
-  //       setTheme(storedTheme === "true");
-  //     };
-
-  //     // Check if window is defined to ensure it's executed on the client side
-  //     if (typeof window !== "undefined") {
-  //       // Attach event listener for changes in localStorage
-  //       window.addEventListener("storage", handleStorageChange);
-
-  //       // Initial setup
-  //       handleStorageChange();
-
-  //       // Clean up the event listener when the component unmounts
-  //       return () => {
-  //         window.removeEventListener("storage", handleStorageChange);
-  //       };
-  //     }
-  //   }, []); // Empty dependency array as it runs once on mount
-
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -60,10 +53,8 @@ export default function SignUp() {
         toast.warning("Please fill in all fields");
         return;
       }
-
       console.log(form);
-
-      const res = await fetch(`http://localhost:400/user/login`, {
+      const res = await fetch(`${BackendURL}/user/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,28 +71,14 @@ export default function SignUp() {
 
       if (data.token) {
         toast.success("Logged in successfully");
-        const user = {
-          token: data.token,
-          id: data.id,
-          email: form.email,
-          name: `${form.firstName} ${form.lastName}`,
-        };
+        setUser(data.user);
 
-        if (localStorage.getItem("candidate")) {
-          localStorage.removeItem("candidate");
-        }
-        if (localStorage.getItem("interviewer")) {
-          localStorage.removeItem("interviewer");
-        }
-
-        localStorage.setItem(
-          `${form.role == "candidate" ? "candidate" : "interviewer"}`,
-          JSON.stringify(user)
-        );
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(user));
 
         setForm({ email: "", password: "", firstName: "", lastName: "" });
-
         router.push("/");
+
       } else {
         toast.error(data.msg);
       }
@@ -219,7 +196,7 @@ export default function SignUp() {
         <div className="flex flex-row justify-between px-[50px]">
           <div>Already have an account?</div>
           <div className=" underline font-semibold">
-            <Link href="/login">Login</Link>
+            <Link href="/signin">Login</Link>
           </div>
         </div>
       </div>

@@ -4,9 +4,22 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Toaster, toast } from "sonner";
+import { BackendURL } from "../../../config";
+import { RecoilRoot, useRecoilState } from "recoil";
+import { userAtom } from "@/atom/user";
 require("dotenv").config();
 
-export default function Login() {
+export default function() {
+
+  return <>
+  <RecoilRoot>
+      <Signin />
+  </RecoilRoot>
+  </>
+}
+
+function Signin() {
+  const [user, setUser] = useRecoilState(userAtom);
   const router = useRouter();
   const [isCandidate, setCandidate] = useState(false);
   const [form, setForm] = useState({
@@ -27,27 +40,6 @@ export default function Login() {
     isCandid ? setInterviewStyle(true) : setInterviewStyle(false);
   };
 
-  //   useEffect(() => {
-  //     const handleStorageChange = () => {
-  //       const storedTheme = localStorage.getItem("theme");
-  //       setTheme(storedTheme === "true");
-  //     };
-
-  //     // Check if window is defined to ensure it's executed on the client side
-  //     if (typeof window !== "undefined") {
-  //       // Attach event listener for changes in localStorage
-  //       window.addEventListener("storage", handleStorageChange);
-
-  //       // Initial setup
-  //       handleStorageChange();
-
-  //       // Clean up the event listener when the component unmounts
-  //       return () => {
-  //         window.removeEventListener("storage", handleStorageChange);
-  //       };
-  //     }
-  //   }, []); // Empty dependency array as it runs once on mount
-
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -59,41 +51,24 @@ export default function Login() {
 
       console.log(form);
 
-      const res = await fetch(`http://localhost:400/user/login`, {
+      const res = await fetch(`${BackendURL}/user/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: form.email,
-          password: form.password,
-          role: form.role,
+          password: form.password
         }),
       });
-
       const data = await res.json();
 
       if (data.token) {
         toast.success("Logged in successfully");
-        const user = {
-          token: data.token,
-          id: data.id,
-          name: data.name,
-          email: form.email,
-        };
+        setUser(data.user);
 
-        if (localStorage.getItem("candidate")) {
-          localStorage.removeItem("candidate");
-        }
-        if (localStorage.getItem("interviewer")) {
-          localStorage.removeItem("interviewer");
-        }
-
-        localStorage.setItem(
-          `${form.role == "candidate" ? "candidate" : "interviewer"}`,
-          JSON.stringify(user)
-        );
-
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(user));
         setForm({ email: "", password: "" });
 
         router.push("/");
@@ -106,6 +81,8 @@ export default function Login() {
   };
 
   return (
+    <RecoilRoot>
+
     <main className="flex flex-col justify-center items-center h-dvh w-dvw bg-[#12151c]">
       <h1 className=" text-center mb-4 text-[2rem] text-white">Log In</h1>
       <div className="w-[500px] shadow-[0px_20px_50px_0px_rgba(0,0,0,0.25)] pb-[50px] rounded-[10px] bg-slate-600 text-white">
@@ -113,21 +90,21 @@ export default function Login() {
           <div
             className={`flex justify-center items-center w-2/4 rounded-tl-[10px] ${
               candidateStyle
-                ? `bg-[#1b222c] border-b-2 border-transparent`
-                : `bg-none border-b-2 border-b-white`
+              ? `bg-[#1b222c] border-b-2 border-transparent`
+              : `bg-none border-b-2 border-b-white`
             }`}
             onClick={toggleCandidate(true)}
-          >
+            >
             <span>Candidate</span>
           </div>
           <div
             className={`flex justify-center items-center w-2/4 rounded-tr-[10px]  ${
               interviewStyle
-                ? `bg-[#1b222c] border-b-2 border-transparent`
-                : `bg-none border-b-2 border-b-white`
+              ? `bg-[#1b222c] border-b-2 border-transparent`
+              : `bg-none border-b-2 border-b-white`
             }`}
             onClick={toggleCandidate(false)}
-          >
+            >
             <span>Interviewer</span>
           </div>
         </div>
@@ -136,7 +113,7 @@ export default function Login() {
             className={`flex flex-col gap-[0.5em] mb-[2em] ${
               focus.email ? "underline" : ""
             }`}
-          >
+            >
             <div className="text-[0.8em]">EMAIL ADDRESS</div>
             <input
               className="text-[1em] border px-[15px] py-2.5 rounded-[5px] border-solid border-[#ddd] text-black outline-none"
@@ -149,13 +126,13 @@ export default function Login() {
               onFocus={() => setFocus({ ...focus, email: true })}
               onBlur={() => setFocus({ ...focus, email: false })}
               value={form.email}
-            />
+              />
           </label>
           <label
             className={`flex flex-col gap-[0.5em] mb-[2em] ${
               focus.password ? "underline" : ""
             }`}
-          >
+            >
             <div className="text-[0.8em]">PASSWORD</div>
             <input
               className="text-[1em] border px-[15px] py-2.5 rounded-[5px] border-solid border-[#ddd] text-black outline-none"
@@ -168,14 +145,14 @@ export default function Login() {
               onFocus={() => setFocus({ ...focus, password: true })}
               onBlur={() => setFocus({ ...focus, password: false })}
               value={form.password}
-            />
+              />
           </label>
           <input
             className="text-[19px] text-white cursor-pointer mt-2.5 p-2.5 rounded-[5px] border-[none] bg-slate-950 font-bold"
             type="submit"
             value="Log In"
             onClick={handleSubmit}
-          />
+            />
         </form>
         <div className="flex flex-row justify-between px-[50px]">
           <div>Don't have an account?</div>
@@ -186,5 +163,6 @@ export default function Login() {
       </div>
       <Toaster theme="light" position="bottom-left" />
     </main>
+            </RecoilRoot>
   );
 }

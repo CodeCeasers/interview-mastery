@@ -4,14 +4,21 @@ import { CodeEditor } from "@/components/Editor"
 import { EditorBtns } from "@/components/EditorBtns"
 import { EditorHeader } from "@/components/EditorTop"
 import { Video } from "@/components/VideoChat"
+import { useRouter } from "next/navigation";
 import { RecoilRoot } from "recoil";
 
 const { InputOutputs } = require("@/components/CodeOutput")
 
+
 export default function(){
+    const router = useRouter();
+    if(!localStorage.getItem('token')){
+        router.push('/signin');
+        return <></>
+    }
+    
     return <>
     <RecoilRoot>
-
     <div className="flex flex-col p-3 bg-zinc-900 h-screen justify-center">
         <div className="flex w-full h-[95vh] justify-center gap-1">
             <div className="flex flex-col w-full h-full bg-zinc-950 rounded-lg p-2 gap-2">
