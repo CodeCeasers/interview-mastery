@@ -1,3 +1,4 @@
+import { gem } from "./gemini";
 import { userRoute } from "./user";
 
 const exp = require('express');
@@ -9,5 +10,6 @@ router.get("/", (req:any, res:any)=>{
 })
 
 router.use('/user', userRoute);
+router.use('/gemini', gem);
 
 export = router;

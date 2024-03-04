@@ -1,18 +1,20 @@
 "use client"
 import { codeAtom } from '@/atom/codeAtom';
 import { codeLang } from '@/atom/codeLang';
+import { codeOp } from '@/atom/codeOutputAtom';
 import React, { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 export function EditorBtns() {
-const code = useRecoilValue(codeAtom);
+  const code = useRecoilValue(codeAtom);
+  const setOp = useSetRecoilState(codeOp);
   return (
     <>
       <div className="w-full flex justify-end items-center mt-4">
         <div className="flex flex-row gap-2">
           <button className="bg-white hover:bg-zinc-400 rounded-md text-black p-2 font-semibold"
           onClick={()=>{
-            handleCodeChange(code);
+            handleCodeChange(code, setOp);
           }}>
             Run code
           </button>
@@ -85,15 +87,19 @@ function Lang() {
   );
 }
 
-const handleCodeChange = async (code) => {
+const handleCodeChange = async (code, setOp) => {
+  setOp("");
   try {
-    await fetch("http://localhost:4000/api/code", {
+    const response = await fetch("http://localhost:4000/api/v1/gemini", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ code: code }),
     });
+    const data = await response.json();
+    console.log(data);
+    setOp(data.msg);
   } catch (error) {
     console.error("Error updating code on the backend:", error.message);
   }

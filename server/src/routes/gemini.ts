@@ -1,13 +1,14 @@
-import authMiddlewar from "../middleware";
+// import authMiddlewar from "../middleware";
 
 const express = require('express');
 
-const gem = express.Router();
+export const gem = express.Router();
 
-gem.post('/gemini', authMiddlewar, async (req:any, res:any) => {
+gem.post('/', async (req:any, res:any) => {
     const body = req.body;
-    const query = body.query;
-    const response = await runChat(query);
+    console.log(body);
+    const code = body.code;
+    const response = await runChat(code);
     res.json({
         msg: response
     });
@@ -28,7 +29,7 @@ const {
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
   
     const generationConfig = {
-      temperature: 0.9,
+      temperature: 0,
       topK: 1,
       topP: 1,
       maxOutputTokens: 2048,

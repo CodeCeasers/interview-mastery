@@ -1,8 +1,11 @@
 "use client";
 
+import { codeOp } from "@/atom/codeOutputAtom";
 import { Tabs, Tab } from "./Tabs";
+import { useRecoilValue } from "recoil";
 
 export const InputOutputs = () => {
+  const out = useRecoilValue(codeOp);
   return (
     <div>
       <Tabs>
@@ -18,7 +21,7 @@ export const InputOutputs = () => {
         </Tab>
         <Tab label="Output">
           <div className="">
-            <div className="w-full text-white font-bold">4 5 7</div>
+            <div className="w-full text-white font-bold">{out}</div>
           </div>
         </Tab>
       </Tabs>
