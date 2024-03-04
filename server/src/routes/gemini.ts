@@ -8,7 +8,8 @@ gem.post('/', async (req:any, res:any) => {
     const body = req.body;
     console.log(body);
     const code = body.code;
-    const response = await runChat(code);
+    const input = body.input;
+    const response = await runChat(code, input);
     res.json({
         msg: response
     });
@@ -24,7 +25,7 @@ const {
   const MODEL_NAME = "gemini-1.0-pro";
   const API_KEY = "AIzaSyAz4YT1N2Q3dypM82nMj7f4_FB8o6qGHIg";
   
-  async function runChat(query: string) {
+  async function runChat(query: string, input: string) {
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
   
@@ -62,7 +63,7 @@ const {
     });
   
 
-    const result = await chat.sendMessage(query);
+    const result = await chat.sendMessage(`${query}, ${input}`);
     const response = result.response;
     return response.text();
   }

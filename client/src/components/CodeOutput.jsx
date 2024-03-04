@@ -1,11 +1,12 @@
 "use client";
 
-import { codeOp } from "@/atom/codeOutputAtom";
+import { codeIp, codeOp } from "@/atom/codeOutputAtom";
 import { Tabs, Tab } from "./Tabs";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 export const InputOutputs = () => {
   const out = useRecoilValue(codeOp);
+  const input = useSetRecoilState(codeIp);
   return (
     <div>
       <Tabs>
@@ -15,6 +16,9 @@ export const InputOutputs = () => {
               name=""
               id=""
               rows={8}
+              onChange={(e)=>{
+                input(e.target.value);
+              }}
               className="w-full bg-black rounded-md text-white outline-none p-2"
             ></textarea>
           </div>

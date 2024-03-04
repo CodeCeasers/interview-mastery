@@ -1,20 +1,21 @@
 "use client"
 import { codeAtom } from '@/atom/codeAtom';
 import { codeLang } from '@/atom/codeLang';
-import { codeOp } from '@/atom/codeOutputAtom';
+import { codeIp, codeOp } from '@/atom/codeOutputAtom';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 export function EditorBtns() {
   const code = useRecoilValue(codeAtom);
   const setOp = useSetRecoilState(codeOp);
+  const inp = useRecoilValue(codeIp);
   return (
     <>
       <div className="w-full flex justify-end items-center mt-4">
         <div className="flex flex-row gap-2">
           <button className="bg-white hover:bg-zinc-400 rounded-md text-black p-2 font-semibold"
           onClick={()=>{
-            handleCodeChange(code, setOp);
+            handleCodeChange(code, setOp, inp);
           }}>
             Run code
           </button>
@@ -87,7 +88,7 @@ function Lang() {
   );
 }
 
-const handleCodeChange = async (code, setOp) => {
+const handleCodeChange = async (code, setOp, inp) => {
   setOp("");
   try {
     const response = await fetch("http://localhost:4000/api/v1/gemini", {
@@ -95,7 +96,10 @@ const handleCodeChange = async (code, setOp) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ code: code }),
+      body: JSON.stringify({ 
+        code: code,
+        input: inp
+       }),
     });
     const data = await response.json();
     console.log(data);
