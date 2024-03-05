@@ -3,12 +3,13 @@ import express from 'express';
 import { AccessToken } from 'livekit-server-sdk';
 
 const createToken = async () => {
+  const randNum = Math.floor(Math.random() * 1000);
   // if this room doesn't exist, it'll be automatically created when the first
   // client joins
   const roomName = 'quickstart-room';
   // identifier to be used for participant.
   // it's available as LocalParticipant.identity with livekit-client SDK
-  const participantName = 'quickstart-username';
+  const participantName = `quickstart-username ${randNum}`;
 
   const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
     identity: participantName,
@@ -23,9 +24,8 @@ const createToken = async () => {
 const app = express();
 const port = 5000;
 
-app.get('/getToken:id', async (req, res) => {
-  const userId = req.params.id;
-  const token = await createToken(userId);
+app.get('/getToken', async (req, res) => {
+  const token = await createToken();
   res.send(token);
 });
 
