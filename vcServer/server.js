@@ -21,10 +21,12 @@ const createToken = async () => {
 }
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
-app.get('/getToken', async (req, res) => {
-  res.send(await createToken());
+app.get('/getToken:id', async (req, res) => {
+  const userId = req.params.id;
+  const token = await createToken(userId);
+  res.send(token);
 });
 
 app.listen(port, () => {

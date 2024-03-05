@@ -72,7 +72,7 @@ function Signin() {
         setForm({ email: "", password: "" });
         
 
-        router.push("/");
+        router.push("/bot");
       } else {
         toast.error(data.msg);
       }

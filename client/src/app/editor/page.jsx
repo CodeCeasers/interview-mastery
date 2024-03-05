@@ -22,10 +22,10 @@ export default function(){
     <div className="flex flex-col p-3 bg-zinc-900 h-screen justify-center">
         <div className="flex w-full h-[95vh] justify-center gap-1">
             <div className="flex flex-col w-full h-full bg-zinc-950 rounded-lg p-2 gap-2">
-                <div className="flex h-2/3 w-full rounded-md p-2 bg-zinc-900">
+                <div className="flex h-1/2 w-full rounded-md p-2 bg-zinc-900">
                     <Details/>
                 </div>
-                <div className="flex h-1/3 w-full rounded-md p-2 bg-zinc-900">
+                <div className="flex h-1/2 w-full rounded-md p-2 bg-zinc-900">
                     <Video/>
                 </div>
             </div>

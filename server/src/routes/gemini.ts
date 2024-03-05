@@ -30,7 +30,7 @@ const {
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
   
     const generationConfig = {
-      temperature: 0,
+      temperature: 0.8,
       topK: 1,
       topP: 1,
       maxOutputTokens: 2048,
@@ -62,8 +62,11 @@ const {
       ],
     });
   
+    const msg = `You are a compiler, You should only execute the code and noting else and give output as a compiler only and not the statements.
+    Here is the code you should execute: ${query}
+    And here is the input you should provide: ${input}`
 
-    const result = await chat.sendMessage(`${query}, ${input}`);
+    const result = await chat.sendMessage(`${msg}`);
     const response = result.response;
     return response.text();
   }

@@ -78,7 +78,7 @@ function SignUp() {
         localStorage.setItem("user", data.user);
 
         setForm({ email: "", password: "", firstName: "", lastName: "" });
-        router.push("/");
+        router.push("/bot");
 
       } else {
         toast.error(data.msg);
