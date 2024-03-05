@@ -68,8 +68,9 @@ function Signin() {
         setUser(data.user);
 
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", data.user);
         setForm({ email: "", password: "" });
+        
 
         router.push("/");
       } else {

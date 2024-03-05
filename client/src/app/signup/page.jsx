@@ -72,9 +72,10 @@ function SignUp() {
       if (data.token) {
         toast.success("Logged in successfully");
         setUser(data.user);
+      
 
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", data.user);
 
         setForm({ email: "", password: "", firstName: "", lastName: "" });
         router.push("/");
